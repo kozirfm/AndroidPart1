@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="nameDaySize">24sp</dimen>
+    <dimen name="temperatureDaySize">24sp</dimen>
+    <dimen name="main_temperature">36sp</dimen>
+    <dimen name="main_city">36sp</dimen>
+</resources>
