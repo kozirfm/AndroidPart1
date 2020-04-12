@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="city">Saint-Petersburg</string>
+    <string name="main_temperature">+25</string>
+    <string name="monday">Monday</string>
+    <string name="tuesday">Tuesday</string>
+    <string name="wednesday">Wednesday</string>
+    <string name="thursday">Thursday</string>
+    <string name="friday">Friday</string>
+    <string name="saturday">Saturday</string>
+    <string name="sunday">Sunday</string>
+    <string name="dt">+20</string>
+    <string name="weather">weather</string>
+    <string name="commercial">Commercial</string>
+
 </resources>
