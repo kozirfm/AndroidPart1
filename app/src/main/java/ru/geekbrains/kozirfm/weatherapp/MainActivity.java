@@ -2,9 +2,12 @@ package ru.geekbrains.kozirfm.weatherapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String LIFECYCLEMESSAGE = "LIFECYCLEMESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeToast(String msg){
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+        Log.d(LIFECYCLEMESSAGE, msg);
     }
 }
 
