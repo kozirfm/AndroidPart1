@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">WeatherApp</string>
-    <string name="city">Saint-Petersburg</string>
+    <string name="main_city">Saint-Petersburg</string>
     <string name="main_temperature">+25</string>
     <string name="monday">Monday</string>
     <string name="tuesday">Tuesday</string>
