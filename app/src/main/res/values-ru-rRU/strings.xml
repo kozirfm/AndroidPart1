@@ -20,7 +20,7 @@
     <string name="city_sochi">Сочи</string>
     <string name="city_novosibirsk">Новосибирск</string>
     <string name="city_kazan">Казань</string>
-    <string name="select_city_button">ОК</string>
+    <string name="send_selected_city_button">ОК</string>
     <string name="settings">Настройки:</string>
     <string name="temperature">Температура:</string>
     <string name="wind_power">Сила ветра:</string>
@@ -32,7 +32,10 @@
     <string name="wind_power_kmh">км/ч</string>
     <string name="pressure_button_mmHg">мм рт. ст.</string>
     <string name="pressure_button_hPa">гПа</string>
-    <string name="wind_power_main">10 м/с</string>
-    <string name="pressure_main">760 мм.рт.с</string>
+    <string name="main_wind_power">10</string>
+    <string name="main_pressure">760</string>
     <string name="dark_theme">Темная тема</string>
+    <string name="select_city_button">Выбрать город</string>
+    <string name="main_wind_power_name">м/с</string>
+    <string name="main_pressure_name">мм рт. ст</string>
 </resources>

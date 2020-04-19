@@ -22,8 +22,10 @@
             android:layout_height="wrap_content"
             android:autofillHints=""
             android:ems="10"
+            android:focusable="auto"
             android:hint="@string/search_city"
-            android:inputType="text" />
+            android:inputType="text"
+            android:visibility="invisible" />
 
         <RadioGroup
             android:id="@+id/checkedCity"
@@ -66,10 +68,10 @@
         </RadioGroup>
 
         <Button
-            android:id="@+id/selectCityButton"
+            android:id="@+id/sendSelectedCityButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/select_city_button" />
+            android:text="@string/send_selected_city_button" />
     </LinearLayout>
 
 </ScrollView>
