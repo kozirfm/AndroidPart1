@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 WeatherCity weatherCity = Parcels.unwrap(parcelable);
                 mainCity.setText(weatherCity.city);
                 mainTemperature.setText(weatherCity.temperature);
-                mainWindPower.setText(weatherCity.temperature);
+                mainWindPower.setText(weatherCity.windPower);
                 mainPressure.setText(weatherCity.pressure);
             }
         } catch (NullPointerException e) {
