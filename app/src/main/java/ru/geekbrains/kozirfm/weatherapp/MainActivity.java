@@ -1,26 +1,22 @@
 package ru.geekbrains.kozirfm.weatherapp;
 
-import android.content.Intent;
-import android.os.Parcelable;
-
-import org.parceler.Parcels;
-
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements Constants {
-
 
     private TextView mainCity;
     private TextView mainTemperature;
     private TextView mainWindPower;
     private TextView mainPressure;
-
+    private SettingsFragment settingsFragment;
+    private SelectCityFragment selectCityFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +30,43 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainTemperature.setText(R.string.main_temperature);
         mainWindPower.setText(R.string.main_wind_power);
         mainPressure.setText(R.string.main_pressure);
-        Button selectCityButton = findViewById(R.id.selectCityButton);
-        selectCityButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), SelectCityActivity.class);
-                startActivityForResult(intent, REQUEST_CODE_SELECTED_CITY_ACTIVITY);
-            }
-        });
+        settingsFragment = new SettingsFragment();
+        selectCityFragment = new SelectCityFragment();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        switch (item.getItemId()) {
+            case R.id.menuSelectCity:
+                if (fragmentManager.getBackStackEntryCount() != 0) {
+                    fragmentManager.popBackStack();
+                }
+                if (fragmentManager.findFragmentById(R.id.fragmentPart) != selectCityFragment) {
+                    fragmentTransaction.replace(R.id.fragmentPart, selectCityFragment).
+                            addToBackStack(null).
+                            commit();
+                }
+                break;
+            case R.id.menuSettings:
+                if (fragmentManager.getBackStackEntryCount() != 0) {
+                    fragmentManager.popBackStack();
+                }
+                if (fragmentManager.findFragmentById(R.id.fragmentPart) != settingsFragment) {
+                    fragmentTransaction.replace(R.id.fragmentPart, settingsFragment).
+                            addToBackStack(null).
+                            commit();
+                }
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -51,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements Constants {
         outState.putString(MAIN_TEMPERATURE, mainTemperature.getText().toString());
         outState.putString(MAIN_WIND_POWER, mainWindPower.getText().toString());
         outState.putString(MAIN_PRESSURE, mainPressure.getText().toString());
-
     }
 
     @Override
@@ -61,25 +85,5 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainTemperature.setText(savedInstanceState.getString(MAIN_TEMPERATURE));
         mainWindPower.setText(savedInstanceState.getString(MAIN_WIND_POWER));
         mainPressure.setText(savedInstanceState.getString(MAIN_PRESSURE));
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode != REQUEST_CODE_SELECTED_CITY_ACTIVITY){
-            super.onActivityResult(requestCode, resultCode, data);
-            return;
-        }
-        try {
-            if (resultCode == RESULT_OK) {
-                Parcelable parcelable = data.getParcelableExtra(SELECTED_CITY);
-                WeatherCity weatherCity = Parcels.unwrap(parcelable);
-                mainCity.setText(weatherCity.city);
-                mainTemperature.setText(weatherCity.temperature);
-                mainWindPower.setText(weatherCity.windPower);
-                mainPressure.setText(weatherCity.pressure);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
     }
 }

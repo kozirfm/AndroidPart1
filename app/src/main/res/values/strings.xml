@@ -11,9 +11,9 @@
     <string name="saturday">Saturday</string>
     <string name="sunday">Sunday</string>
     <string name="dt">+20</string>
-    <string name="weather">weather</string>
+    <string name="weather">Weather</string>
     <string name="commercial">Commercial</string>
-    <string name="select_city">Select the city:</string>
+    <string name="select_city">Select the city</string>
     <string name="search_city">Enter the city name</string>
     <string name="city_moscow">Moscow</string>
     <string name="city_saint_petersburg">Saint-Petersburg</string>
@@ -38,6 +38,4 @@
     <string name="select_city_button">Select city</string>
     <string name="main_wind_power_name">m/s</string>
     <string name="main_pressure_name">mmHg</string>
-
-
 </resources>

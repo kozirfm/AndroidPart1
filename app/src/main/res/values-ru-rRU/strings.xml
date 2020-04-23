@@ -11,9 +11,9 @@
     <string name="saturday">Суббота</string>
     <string name="sunday">Воскресенье</string>
     <string name="dt">+20</string>
-    <string name="weather">weather</string>
+    <string name="weather">Погода</string>
     <string name="commercial">Реклама</string>
-    <string name="select_city">Выберите город:</string>
+    <string name="select_city">Выберите город</string>
     <string name="search_city">Введите название города</string>
     <string name="city_moscow">Москва</string>
     <string name="city_saint_petersburg">Санкт-Петербург</string>
@@ -21,7 +21,7 @@
     <string name="city_novosibirsk">Новосибирск</string>
     <string name="city_kazan">Казань</string>
     <string name="send_selected_city_button">ОК</string>
-    <string name="settings">Настройки:</string>
+    <string name="settings">Настройки</string>
     <string name="temperature">Температура:</string>
     <string name="wind_power">Сила ветра:</string>
     <string name="pressure">Давление:</string>
