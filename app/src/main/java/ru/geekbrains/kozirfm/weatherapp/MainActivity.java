@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
         if (fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStack();
         }
-        if (fragmentManager.findFragmentById(R.id.fragmentPart) != selectCityFragment) {
+        if (fragmentManager.findFragmentById(R.id.fragmentPart) != fragment) {
             fragmentTransaction.replace(R.id.fragmentPart, fragment).
                     addToBackStack(null).
                     commit();
