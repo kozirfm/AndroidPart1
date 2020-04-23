@@ -42,28 +42,12 @@ public class MainActivity extends AppCompatActivity implements Constants {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         switch (item.getItemId()) {
             case R.id.menuSelectCity:
-                if (fragmentManager.getBackStackEntryCount() != 0) {
-                    fragmentManager.popBackStack();
-                }
-                if (fragmentManager.findFragmentById(R.id.fragmentPart) != selectCityFragment) {
-                    fragmentTransaction.replace(R.id.fragmentPart, selectCityFragment).
-                            addToBackStack(null).
-                            commit();
-                }
+                setFragment(selectCityFragment);
                 break;
             case R.id.menuSettings:
-                if (fragmentManager.getBackStackEntryCount() != 0) {
-                    fragmentManager.popBackStack();
-                }
-                if (fragmentManager.findFragmentById(R.id.fragmentPart) != settingsFragment) {
-                    fragmentTransaction.replace(R.id.fragmentPart, settingsFragment).
-                            addToBackStack(null).
-                            commit();
-                }
+                setFragment(settingsFragment);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -85,5 +69,17 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainTemperature.setText(savedInstanceState.getString(MAIN_TEMPERATURE));
         mainWindPower.setText(savedInstanceState.getString(MAIN_WIND_POWER));
         mainPressure.setText(savedInstanceState.getString(MAIN_PRESSURE));
+    }
+     private void setFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (fragmentManager.getBackStackEntryCount() != 0) {
+            fragmentManager.popBackStack();
+        }
+        if (fragmentManager.findFragmentById(R.id.fragmentPart) != selectCityFragment) {
+            fragmentTransaction.replace(R.id.fragmentPart, fragment).
+                    addToBackStack(null).
+                    commit();
+        }
     }
 }
