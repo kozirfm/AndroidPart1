@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
+        initWeekWeather();
     }
 
     @Override
@@ -86,5 +89,15 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainPressure.setText(R.string.main_pressure);
         settingsFragment = new SettingsFragment();
         selectCityFragment = new SelectCityFragment();
+    }
+
+    private void initWeekWeather() {
+        WeekWeatherSource weekWeatherSource = new WeekWeatherSource(getResources()).build();
+        RecyclerView recyclerView = findViewById(R.id.weekWeather);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        WeekWeatherAdapter adapter = new WeekWeatherAdapter(weekWeatherSource);
+        recyclerView.setAdapter(adapter);
     }
 }

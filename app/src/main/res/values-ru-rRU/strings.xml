@@ -38,4 +38,5 @@
     <string name="select_city_button">Выбрать город</string>
     <string name="main_wind_power_name">м/с</string>
     <string name="main_pressure_name">мм рт. ст</string>
+    <string name="date">26 апреля</string>
 </resources>

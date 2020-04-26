@@ -20,7 +20,7 @@ public class ListCitiesAdapter extends RecyclerView.Adapter<ListCitiesAdapter.Li
     @Override
     public ListCitiesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item, viewGroup, false);
+                .inflate(R.layout.item_cities_recycler_view, viewGroup, false);
         return new ListCitiesViewHolder(view);
     }
 
