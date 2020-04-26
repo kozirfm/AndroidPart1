@@ -23,16 +23,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainCity = findViewById(R.id.mainCity);
-        mainTemperature = findViewById(R.id.mainTemperature);
-        mainWindPower = findViewById(R.id.mainWindPower);
-        mainPressure = findViewById(R.id.mainPressure);
-        mainCity.setText(R.string.city_moscow);
-        mainTemperature.setText(R.string.main_temperature);
-        mainWindPower.setText(R.string.main_wind_power);
-        mainPressure.setText(R.string.main_pressure);
-        settingsFragment = new SettingsFragment();
-        selectCityFragment = new SelectCityFragment();
+        initView();
     }
 
     @Override
@@ -82,5 +73,18 @@ public class MainActivity extends AppCompatActivity implements Constants {
                     addToBackStack(null).
                     commit();
         }
+    }
+
+    private void initView(){
+        mainCity = findViewById(R.id.mainCity);
+        mainTemperature = findViewById(R.id.mainTemperature);
+        mainWindPower = findViewById(R.id.mainWindPower);
+        mainPressure = findViewById(R.id.mainPressure);
+        mainCity.setText(R.string.city_moscow);
+        mainTemperature.setText(R.string.main_temperature);
+        mainWindPower.setText(R.string.main_wind_power);
+        mainPressure.setText(R.string.main_pressure);
+        settingsFragment = new SettingsFragment();
+        selectCityFragment = new SelectCityFragment();
     }
 }
