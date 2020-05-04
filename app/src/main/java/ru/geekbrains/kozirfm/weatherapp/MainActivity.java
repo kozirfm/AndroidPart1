@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -23,16 +25,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mainCity = findViewById(R.id.mainCity);
-        mainTemperature = findViewById(R.id.mainTemperature);
-        mainWindPower = findViewById(R.id.mainWindPower);
-        mainPressure = findViewById(R.id.mainPressure);
-        mainCity.setText(R.string.city_moscow);
-        mainTemperature.setText(R.string.main_temperature);
-        mainWindPower.setText(R.string.main_wind_power);
-        mainPressure.setText(R.string.main_pressure);
-        settingsFragment = new SettingsFragment();
-        selectCityFragment = new SelectCityFragment();
+        initView();
+        initWeekWeather();
     }
 
     @Override
@@ -82,5 +76,28 @@ public class MainActivity extends AppCompatActivity implements Constants {
                     addToBackStack(null).
                     commit();
         }
+    }
+
+    private void initView(){
+        mainCity = findViewById(R.id.mainCity);
+        mainTemperature = findViewById(R.id.mainTemperature);
+        mainWindPower = findViewById(R.id.mainWindPower);
+        mainPressure = findViewById(R.id.mainPressure);
+        mainCity.setText(R.string.city_moscow);
+        mainTemperature.setText(R.string.main_temperature);
+        mainWindPower.setText(R.string.main_wind_power);
+        mainPressure.setText(R.string.main_pressure);
+        settingsFragment = new SettingsFragment();
+        selectCityFragment = new SelectCityFragment();
+    }
+
+    private void initWeekWeather() {
+        WeekWeatherSource weekWeatherSource = new WeekWeatherSource(getResources()).build();
+        RecyclerView recyclerView = findViewById(R.id.weekWeather);
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(layoutManager);
+        WeekWeatherAdapter adapter = new WeekWeatherAdapter(weekWeatherSource);
+        recyclerView.setAdapter(adapter);
     }
 }

@@ -38,4 +38,5 @@
     <string name="select_city_button">Select city</string>
     <string name="main_wind_power_name">m/s</string>
     <string name="main_pressure_name">mmHg</string>
+    <string name="date">26 april</string>
 </resources>

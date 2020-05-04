@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="weekDay">
+        <item>Понедельник</item>
+        <item>Вторник</item>
+        <item>Среда</item>
+        <item>Четверг</item>
+        <item>Пятница</item>
+        <item>Суббота</item>
+        <item>Воскресенье</item>
+    </string-array>
+    <string-array name="weekTemp">
+        <item>+20</item>
+        <item>+21</item>
+        <item>+22</item>
+        <item>+23</item>
+        <item>+24</item>
+        <item>+25</item>
+        <item>+26</item>
+    </string-array>
+</resources>
