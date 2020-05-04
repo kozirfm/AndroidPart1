@@ -105,8 +105,14 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.navigationHome:
-                            getSupportFragmentManager().beginTransaction().hide(getSupportFragmentManager().findFragmentById(R.id.fragmentPart)).commit();
-                            return true;
+                            if (getSupportFragmentManager().getFragments().size() != 0) {
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .hide(getSupportFragmentManager().findFragmentById(R.id.fragmentPart))
+                                        .commit();
+                                return true;
+                            }
+                            return false;
                         case R.id.navigationSearch:
                             setFragment(selectCityFragment);
                             return true;

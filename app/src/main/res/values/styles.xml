@@ -5,9 +5,16 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@drawable/back</item>
+        <item name="android:windowBackground">@drawable/ground</item>
+        <item name="itemIconTint">@android:color/secondary_text_light</item>
+        <item name="itemTextColor">@android:color/secondary_text_light</item>
     </style>
 
-    <style name="AppDarkTheme" parent="Theme.MaterialComponents.NoActionBar"/>
+    <style name="AppDarkTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryDarkTheme</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkTheme</item>
+        <item name="colorAccent">@color/colorPrimaryDarkTheme</item>
+        <item name="android:windowBackground">@drawable/ground_night</item>
+    </style>
 
 </resources>
