@@ -1,128 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="?android:colorBackground"
     android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/settingsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:paddingBottom="5dp"
+        android:text="@string/settings"
+        android:textSize="36sp" />
 
-        <TextView
-            android:id="@+id/settingsText"
+    <Switch
+        android:id="@+id/darkLightSwitch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dark_theme"
+        android:textSize="@dimen/settings_params" />
+
+    <TextView
+        android:id="@+id/celsiusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/temperature"
+        android:textSize="24sp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <RadioButton
+            android:id="@+id/celsiusButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="5dp"
-            android:text="@string/settings"
-            android:textSize="36sp" />
-
-        <Switch
-            android:id="@+id/darkLightSwitch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/dark_theme"
+            android:checked="true"
+            android:text="@string/celsius"
             android:textSize="@dimen/settings_params" />
 
-        <TextView
-            android:id="@+id/celsiusText"
+        <RadioButton
+            android:id="@+id/fahrenheitButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="@string/temperature"
-            android:textSize="24sp" />
+            android:text="@string/fahrenheit"
+            android:textSize="@dimen/settings_params" />
+    </RadioGroup>
 
-        <RadioGroup
+    <TextView
+        android:id="@+id/windPowerText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/wind_power"
+        android:textSize="24sp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <RadioButton
+            android:id="@+id/windPowerMs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:checked="true"
+            android:text="@string/wind_power_ms"
+            android:textSize="@dimen/settings_params" />
 
-            <RadioButton
-                android:id="@+id/celsiusButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/celsius"
-                android:textSize="@dimen/settings_params" />
-
-            <RadioButton
-                android:id="@+id/fahrenheitButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/fahrenheit"
-                android:textSize="@dimen/settings_params" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/windPowerText"
+        <RadioButton
+            android:id="@+id/windPowerKmh"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="@string/wind_power"
-            android:textSize="24sp" />
+            android:text="@string/wind_power_kmh"
+            android:textSize="@dimen/settings_params" />
+    </RadioGroup>
 
-        <RadioGroup
+    <TextView
+        android:id="@+id/pressureText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:text="@string/pressure"
+        android:textSize="24sp" />
+
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
+
+        <RadioButton
+            android:id="@+id/pressureButtonMmHg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+            android:checked="true"
+            android:text="@string/pressure_button_mmHg"
+            android:textSize="@dimen/settings_params" />
 
-            <RadioButton
-                android:id="@+id/windPowerMs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/wind_power_ms"
-                android:textSize="@dimen/settings_params" />
-
-            <RadioButton
-                android:id="@+id/windPowerKmh"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/wind_power_kmh"
-                android:textSize="@dimen/settings_params" />
-        </RadioGroup>
-
-        <TextView
-            android:id="@+id/pressureText"
+        <RadioButton
+            android:id="@+id/pressureButtonHPa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="@string/pressure"
-            android:textSize="24sp" />
+            android:text="@string/pressure_button_hPa"
+            android:textSize="@dimen/settings_params" />
+    </RadioGroup>
 
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp">
+    <Button
+        android:id="@+id/selectSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_settings_button" />
 
-            <RadioButton
-                android:id="@+id/pressureButtonMmHg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/pressure_button_mmHg"
-                android:textSize="@dimen/settings_params" />
+</LinearLayout>
 
-            <RadioButton
-                android:id="@+id/pressureButtonHPa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/pressure_button_hPa"
-                android:textSize="@dimen/settings_params" />
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/selectSettingsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/select_settings_button" />
-    </LinearLayout>
-
-</ScrollView>
