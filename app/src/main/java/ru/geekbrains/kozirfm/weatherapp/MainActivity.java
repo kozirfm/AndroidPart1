@@ -1,16 +1,21 @@
 package ru.geekbrains.kozirfm.weatherapp;
 
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements Constants {
 
@@ -21,31 +26,14 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private SettingsFragment settingsFragment;
     private SelectCityFragment selectCityFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTheme();
         setContentView(R.layout.activity_main);
         initView();
         initWeekWeather();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menuSelectCity:
-                setFragment(selectCityFragment);
-                break;
-            case R.id.menuSettings:
-                setFragment(settingsFragment);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -65,20 +53,19 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainWindPower.setText(savedInstanceState.getString(MAIN_WIND_POWER));
         mainPressure.setText(savedInstanceState.getString(MAIN_PRESSURE));
     }
-     private void setFragment(Fragment fragment){
+
+    private void setFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if (fragmentManager.getBackStackEntryCount() != 0) {
-            fragmentManager.popBackStack();
-        }
         if (fragmentManager.findFragmentById(R.id.fragmentPart) != fragment) {
-            fragmentTransaction.replace(R.id.fragmentPart, fragment).
-                    addToBackStack(null).
-                    commit();
+
+            fragmentTransaction.replace(R.id.fragmentPart, fragment).commit();
+        } else {
+            fragmentTransaction.show(fragment).commit();
         }
     }
 
-    private void initView(){
+    private void initView() {
         mainCity = findViewById(R.id.mainCity);
         mainTemperature = findViewById(R.id.mainTemperature);
         mainWindPower = findViewById(R.id.mainWindPower);
@@ -89,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainPressure.setText(R.string.main_pressure);
         settingsFragment = new SettingsFragment();
         selectCityFragment = new SelectCityFragment();
+        BottomNavigationView navigationView = findViewById(R.id.navigationMenu);
+        navigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
     }
 
     private void initWeekWeather() {
@@ -100,4 +89,38 @@ public class MainActivity extends AppCompatActivity implements Constants {
         WeekWeatherAdapter adapter = new WeekWeatherAdapter(weekWeatherSource);
         recyclerView.setAdapter(adapter);
     }
+
+    private void setTheme() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(IS_DARK_THEME_KEY, true)) {
+            setTheme(R.style.AppDarkTheme);
+        } else {
+            setTheme(R.style.AppTheme);
+        }
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                    switch (menuItem.getItemId()) {
+                        case R.id.navigationHome:
+                            if (getSupportFragmentManager().getFragments().size() != 0) {
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .hide(getSupportFragmentManager().findFragmentById(R.id.fragmentPart))
+                                        .commit();
+                                return true;
+                            }
+                            return false;
+                        case R.id.navigationSearch:
+                            setFragment(selectCityFragment);
+                            return true;
+                        case R.id.navigationSettings:
+                            setFragment(settingsFragment);
+                            return true;
+                    }
+                    return false;
+                }
+            };
 }
