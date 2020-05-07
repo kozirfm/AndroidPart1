@@ -12,6 +12,7 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private TextView mainTemperature;
     private TextView mainWindPower;
     private TextView mainPressure;
+    private TextView mainWindPowerName;
+    private TextView mainPressureName;
     private SettingsFragment settingsFragment;
     private SelectCityFragment selectCityFragment;
 
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
         setTheme();
         setContentView(R.layout.activity_main);
         initView();
+        setMetrics();
         initWeekWeather();
     }
 
@@ -70,10 +74,14 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainTemperature = findViewById(R.id.mainTemperature);
         mainWindPower = findViewById(R.id.mainWindPower);
         mainPressure = findViewById(R.id.mainPressure);
+        mainWindPowerName = findViewById(R.id.mainWindPowerName);
+        mainPressureName = findViewById(R.id.mainPressureName);
         mainCity.setText(R.string.city_moscow);
         mainTemperature.setText(R.string.main_temperature);
         mainWindPower.setText(R.string.main_wind_power);
         mainPressure.setText(R.string.main_pressure);
+        mainWindPowerName.setText(R.string.wind_power_ms);
+        mainPressureName.setText(R.string.pressure_button_mmHg);
         settingsFragment = new SettingsFragment();
         selectCityFragment = new SelectCityFragment();
         BottomNavigationView navigationView = findViewById(R.id.navigationMenu);
@@ -88,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements Constants {
         recyclerView.setLayoutManager(layoutManager);
         WeekWeatherAdapter adapter = new WeekWeatherAdapter(weekWeatherSource);
         recyclerView.setAdapter(adapter);
+    }
+
+    private void setMetrics(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        if(sharedPreferences.getBoolean(IS_METRIC_SETTINGS,false)){
+            mainWindPowerName.setText(sharedPreferences.getString(METRICS_WIND_POWER_VALUE, mainWindPowerName.getText().toString()));
+            mainPressureName.setText(sharedPreferences.getString(METRICS_PRESSURE_VALUE, mainPressureName.getText().toString()));
+        }
     }
 
     private void setTheme() {
