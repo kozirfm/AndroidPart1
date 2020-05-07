@@ -35,7 +35,7 @@ public class SettingsFragment extends Fragment implements Constants {
         final View view = inflater.inflate(R.layout.activity_settings, container, false);
         init(view);
 
-        if(sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
+        if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
             temperature.check(sharedPreferences.getInt(METRICS_TEMPERATURE_ID, temperature.getCheckedRadioButtonId()));
             windPower.check(sharedPreferences.getInt(METRICS_WIND_POWER_ID, windPower.getCheckedRadioButtonId()));
             pressure.check(sharedPreferences.getInt(METRICS_PRESSURE_ID, pressure.getCheckedRadioButtonId()));
@@ -54,18 +54,20 @@ public class SettingsFragment extends Fragment implements Constants {
         setMetricsSetting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setMetricsSetting(temperature.getCheckedRadioButtonId(),windPower.getCheckedRadioButtonId(), pressure.getCheckedRadioButtonId());
+                setMetricsSetting(temperature.getCheckedRadioButtonId(), windPower.getCheckedRadioButtonId(), pressure.getCheckedRadioButtonId());
+                TextView temperatureName = getActivity().findViewById(R.id.mainTemperatureName);
                 TextView windPowerName = getActivity().findViewById(R.id.mainWindPowerName);
                 TextView pressureName = getActivity().findViewById(R.id.mainPressureName);
+                temperatureName.setText(temperatureValue.getText());
                 windPowerName.setText(windPowerValue.getText());
                 pressureName.setText(pressureValue.getText());
-                Snackbar.make(view, "Настройки успешно сохранены",Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(view, "Настройки успешно сохранены", Snackbar.LENGTH_SHORT).show();
             }
         });
         return view;
     }
 
-    private void init(View view){
+    private void init(View view) {
         sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         temperature = view.findViewById(R.id.temperatureSetting);
         windPower = view.findViewById(R.id.windPowerSetting);
@@ -74,7 +76,7 @@ public class SettingsFragment extends Fragment implements Constants {
         setDarkTheme = view.findViewById(R.id.darkLightSwitch);
     }
 
-    private void setMetricsSetting(int temperature, int windPower, int pressure){
+    private void setMetricsSetting(int temperature, int windPower, int pressure) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         temperatureValue = getView().findViewById(this.temperature.getCheckedRadioButtonId());
         windPowerValue = getView().findViewById(this.windPower.getCheckedRadioButtonId());

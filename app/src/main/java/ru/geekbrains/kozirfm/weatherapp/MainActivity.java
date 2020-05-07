@@ -12,7 +12,6 @@ import android.os.Bundle;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -24,11 +23,11 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private TextView mainTemperature;
     private TextView mainWindPower;
     private TextView mainPressure;
+    private TextView mainTemperatureName;
     private TextView mainWindPowerName;
     private TextView mainPressureName;
     private SettingsFragment settingsFragment;
     private SelectCityFragment selectCityFragment;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +73,14 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainTemperature = findViewById(R.id.mainTemperature);
         mainWindPower = findViewById(R.id.mainWindPower);
         mainPressure = findViewById(R.id.mainPressure);
+        mainTemperatureName = findViewById(R.id.mainTemperatureName);
         mainWindPowerName = findViewById(R.id.mainWindPowerName);
         mainPressureName = findViewById(R.id.mainPressureName);
         mainCity.setText(R.string.city_moscow);
         mainTemperature.setText(R.string.main_temperature);
         mainWindPower.setText(R.string.main_wind_power);
         mainPressure.setText(R.string.main_pressure);
+        mainTemperatureName.setText(R.string.celsius);
         mainWindPowerName.setText(R.string.wind_power_ms);
         mainPressureName.setText(R.string.pressure_button_mmHg);
         settingsFragment = new SettingsFragment();
@@ -98,9 +99,10 @@ public class MainActivity extends AppCompatActivity implements Constants {
         recyclerView.setAdapter(adapter);
     }
 
-    private void setMetrics(){
+    private void setMetrics() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        if(sharedPreferences.getBoolean(IS_METRIC_SETTINGS,false)){
+        if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
+            mainTemperatureName.setText(sharedPreferences.getString(METRICS_TEMPERATURE_VALUE, mainTemperatureName.getText().toString()));
             mainWindPowerName.setText(sharedPreferences.getString(METRICS_WIND_POWER_VALUE, mainWindPowerName.getText().toString()));
             mainPressureName.setText(sharedPreferences.getString(METRICS_PRESSURE_VALUE, mainPressureName.getText().toString()));
         }
