@@ -120,7 +120,7 @@
                 android:textSize="@dimen/settings_params" />
         </RadioGroup>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/selectSettingsButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
