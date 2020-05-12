@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements Constants{
 
     private void downloadWeatherInfo() {
         try {
-            final URL uri = new URL(WEATHER_URL + WEATHER_API_KEY);
+            final URL uri = new URL(WEATHER_URL + BuildConfig.WEATHER_API_KEY);
             final Handler handler = new Handler();
             new Thread(new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.N)
