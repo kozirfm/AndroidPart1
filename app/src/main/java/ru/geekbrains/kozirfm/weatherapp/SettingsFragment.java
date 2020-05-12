@@ -15,8 +15,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 
 public class SettingsFragment extends Fragment implements Constants {
 
@@ -61,7 +61,7 @@ public class SettingsFragment extends Fragment implements Constants {
                 temperatureName.setText(temperatureValue.getText());
                 windPowerName.setText(windPowerValue.getText());
                 pressureName.setText(pressureValue.getText());
-                Snackbar.make(view, "Настройки успешно сохранены", Snackbar.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.settingSaved, Toast.LENGTH_SHORT).show();
             }
         });
         return view;

@@ -41,4 +41,6 @@
     <string name="date">26 апреля</string>
     <string name="home">Домой</string>
     <string name="search">Поиск</string>
+    <string name="dataUpdated">Данные о погоде обновлены</string>
+    <string name="settingSaved">Настройки успешно сохранены</string>
 </resources>
