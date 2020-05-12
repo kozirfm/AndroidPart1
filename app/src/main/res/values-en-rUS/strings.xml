@@ -43,4 +43,5 @@
     <string name="search">search</string>
     <string name="dataUpdated">Data about weather updated</string>
     <string name="settingSaved">Setting saved</string>
+    <string name="downloadError">Download error</string>
 </resources>

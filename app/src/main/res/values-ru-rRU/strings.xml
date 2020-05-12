@@ -43,4 +43,5 @@
     <string name="search">Поиск</string>
     <string name="dataUpdated">Данные о погоде обновлены</string>
     <string name="settingSaved">Настройки успешно сохранены</string>
+    <string name="downloadError">Ошибка загрузки</string>
 </resources>

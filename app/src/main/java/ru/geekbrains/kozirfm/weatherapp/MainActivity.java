@@ -1,14 +1,12 @@
 package ru.geekbrains.kozirfm.weatherapp;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,18 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.gson.Gson;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import ru.geekbrains.kozirfm.weatherapp.data.WeatherRequest;
-
-public class MainActivity extends AppCompatActivity implements Constants{
+public class MainActivity extends AppCompatActivity implements Constants {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private TextView mainCity;
@@ -44,16 +32,17 @@ public class MainActivity extends AppCompatActivity implements Constants{
     private TextView mainPressureName;
     private SettingsFragment settingsFragment;
     private SelectCityFragment selectCityFragment;
+    private DownloadWeatherData downloadWeatherData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null){
-            downloadWeatherInfo();
-        }
         setTheme();
         setContentView(R.layout.activity_main);
         initView();
+        if (savedInstanceState == null) {
+            setMainInfoOnDisplay();
+        }
         setMetrics();
         initWeekWeather();
     }
@@ -106,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements Constants{
         mainPressureName.setText(R.string.pressure_button_mmHg);
         settingsFragment = new SettingsFragment();
         selectCityFragment = new SelectCityFragment();
+        downloadWeatherData = new DownloadWeatherData();
         BottomNavigationView navigationView = findViewById(R.id.navigationMenu);
         navigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
     }
@@ -138,55 +128,34 @@ public class MainActivity extends AppCompatActivity implements Constants{
         }
     }
 
-    private void downloadWeatherInfo() {
-        try {
-            final URL uri = new URL(WEATHER_URL + BuildConfig.WEATHER_API_KEY);
-            final Handler handler = new Handler();
-            new Thread(new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.N)
-                @Override
-                public void run() {
-                    HttpsURLConnection urlConnection = null;
-                    try {
-                        urlConnection = (HttpsURLConnection) uri.openConnection();
-                        urlConnection.setRequestMethod("GET");
-                        urlConnection.setReadTimeout(10000);
-                        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                        String result = result(in);
-                        Gson gson = new Gson();
-                        final WeatherRequest weatherRequest = gson.fromJson(result, WeatherRequest.class);
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                setMainInfoOnDisplay(weatherRequest);
-                                Toast.makeText(MainActivity.this, R.string.dataUpdated, Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+    private void setMainInfoOnDisplay() {
+        final Handler handler = new Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!downloadWeatherData.downloadWeather()) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.downloadError, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return;
                 }
+                downloadWeatherData.downloadWeather();
 
-                private String result(BufferedReader in) throws IOException {
-                    String line;
-                    StringBuilder lines = new StringBuilder();
-                    while ((line = in.readLine()) != null) {
-                        lines.append(line);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainCity.setText(downloadWeatherData.getCityName());
+                        mainTemperature.setText(Integer.toString(Math.round(downloadWeatherData.getTemperature())));
+                        mainPressure.setText(Integer.toString(Math.round(downloadWeatherData.getPressure())));
+                        mainWindPower.setText(Integer.toString(Math.round(downloadWeatherData.getWindPower())));
+                        Toast.makeText(getApplicationContext(), R.string.dataUpdated, Toast.LENGTH_SHORT).show();
                     }
-                    return lines.toString();
-                }
-
-            }).start();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void setMainInfoOnDisplay(WeatherRequest weatherRequest){
-        mainCity.setText(weatherRequest.getName());
-        mainTemperature.setText(Integer.toString(Math.round(weatherRequest.getMain().getTemp())));
-        mainPressure.setText(Integer.toString(Math.round(weatherRequest.getMain().getPressure())));
-        mainWindPower.setText(Integer.toString(Math.round(weatherRequest.getWind().getSpeed())));
+                });
+            }
+        }).start();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -222,10 +191,9 @@ public class MainActivity extends AppCompatActivity implements Constants{
                 @Override
                 public void run() {
                     swipeRefreshLayout.setRefreshing(false);
-                    downloadWeatherInfo();
+                    setMainInfoOnDisplay();
                 }
-            }, 5000);
+            }, 1000);
         }
     };
-
 }

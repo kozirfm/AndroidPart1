@@ -105,19 +105,20 @@
             android:paddingBottom="5dp">
 
             <RadioButton
-                android:id="@+id/pressureButtonMmHg"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:checked="true"
-                android:text="@string/pressure_button_mmHg"
-                android:textSize="@dimen/settings_params" />
-
-            <RadioButton
                 android:id="@+id/pressureButtonHPa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:checked="true"
                 android:text="@string/pressure_button_hPa"
                 android:textSize="@dimen/settings_params" />
+
+            <RadioButton
+                android:id="@+id/pressureButtonMmHg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pressure_button_mmHg"
+                android:textSize="@dimen/settings_params" />
+
         </RadioGroup>
 
         <com.google.android.material.button.MaterialButton
