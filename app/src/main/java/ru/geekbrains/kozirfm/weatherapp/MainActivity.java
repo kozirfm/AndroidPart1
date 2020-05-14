@@ -11,21 +11,28 @@ import android.os.Bundle;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements Constants {
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private TextView mainCity;
     private TextView mainTemperature;
     private TextView mainWindPower;
     private TextView mainPressure;
+    private TextView mainTemperatureName;
+    private TextView mainWindPowerName;
+    private TextView mainPressureName;
     private SettingsFragment settingsFragment;
     private SelectCityFragment selectCityFragment;
-
+    private DownloadWeatherData downloadWeatherData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +40,10 @@ public class MainActivity extends AppCompatActivity implements Constants {
         setTheme();
         setContentView(R.layout.activity_main);
         initView();
+        if (savedInstanceState == null) {
+            setMainInfoOnDisplay();
+        }
+        setMetrics();
         initWeekWeather();
     }
 
@@ -66,16 +77,25 @@ public class MainActivity extends AppCompatActivity implements Constants {
     }
 
     private void initView() {
+        swipeRefreshLayout = findViewById(R.id.swipeRefresh);
+        swipeRefreshLayout.setOnRefreshListener(refreshListener);
         mainCity = findViewById(R.id.mainCity);
         mainTemperature = findViewById(R.id.mainTemperature);
         mainWindPower = findViewById(R.id.mainWindPower);
         mainPressure = findViewById(R.id.mainPressure);
+        mainTemperatureName = findViewById(R.id.mainTemperatureName);
+        mainWindPowerName = findViewById(R.id.mainWindPowerName);
+        mainPressureName = findViewById(R.id.mainPressureName);
         mainCity.setText(R.string.city_moscow);
         mainTemperature.setText(R.string.main_temperature);
         mainWindPower.setText(R.string.main_wind_power);
         mainPressure.setText(R.string.main_pressure);
+        mainTemperatureName.setText(R.string.celsius);
+        mainWindPowerName.setText(R.string.wind_power_ms);
+        mainPressureName.setText(R.string.pressure_button_mmHg);
         settingsFragment = new SettingsFragment();
         selectCityFragment = new SelectCityFragment();
+        downloadWeatherData = new DownloadWeatherData();
         BottomNavigationView navigationView = findViewById(R.id.navigationMenu);
         navigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
     }
@@ -90,6 +110,15 @@ public class MainActivity extends AppCompatActivity implements Constants {
         recyclerView.setAdapter(adapter);
     }
 
+    private void setMetrics() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
+            mainTemperatureName.setText(sharedPreferences.getString(METRICS_TEMPERATURE_VALUE, mainTemperatureName.getText().toString()));
+            mainWindPowerName.setText(sharedPreferences.getString(METRICS_WIND_POWER_VALUE, mainWindPowerName.getText().toString()));
+            mainPressureName.setText(sharedPreferences.getString(METRICS_PRESSURE_VALUE, mainPressureName.getText().toString()));
+        }
+    }
+
     private void setTheme() {
         SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
         if (sharedPreferences.getBoolean(IS_DARK_THEME_KEY, true)) {
@@ -97,6 +126,36 @@ public class MainActivity extends AppCompatActivity implements Constants {
         } else {
             setTheme(R.style.AppTheme);
         }
+    }
+
+    private void setMainInfoOnDisplay() {
+        final Handler handler = new Handler();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!downloadWeatherData.downloadWeather()) {
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), R.string.downloadError, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    return;
+                }
+                downloadWeatherData.downloadWeather();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mainCity.setText(downloadWeatherData.getCityName());
+                        mainTemperature.setText(Integer.toString(Math.round(downloadWeatherData.getTemperature())));
+                        mainPressure.setText(Integer.toString(Math.round(downloadWeatherData.getPressure())));
+                        mainWindPower.setText(Integer.toString(Math.round(downloadWeatherData.getWindPower())));
+                        Toast.makeText(getApplicationContext(), R.string.dataUpdated, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }).start();
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -123,4 +182,18 @@ public class MainActivity extends AppCompatActivity implements Constants {
                     return false;
                 }
             };
+
+    private SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            swipeRefreshLayout.setRefreshing(true);
+            swipeRefreshLayout.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(false);
+                    setMainInfoOnDisplay();
+                }
+            }, 1000);
+        }
+    };
 }
