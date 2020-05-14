@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.os.Handler;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,9 +39,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
         setTheme();
         setContentView(R.layout.activity_main);
         initView();
-        if (savedInstanceState == null) {
-            setMainInfoOnDisplay();
-        }
+        setMainInfoOnDisplay();
         setMetrics();
         initWeekWeather();
     }
@@ -128,34 +125,31 @@ public class MainActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    private void setMainInfoOnDisplay() {
-        final Handler handler = new Handler();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (!downloadWeatherData.downloadWeather()) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(), R.string.downloadError, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                    return;
-                }
-                downloadWeatherData.downloadWeather();
+    public void setMainInfoOnDisplay() {
+        downloadWeatherData.downloadWeather();
+        String downloadCityName;
 
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mainCity.setText(downloadWeatherData.getCityName());
-                        mainTemperature.setText(Integer.toString(Math.round(downloadWeatherData.getTemperature())));
-                        mainPressure.setText(Integer.toString(Math.round(downloadWeatherData.getPressure())));
-                        mainWindPower.setText(Integer.toString(Math.round(downloadWeatherData.getWindPower())));
-                        Toast.makeText(getApplicationContext(), R.string.dataUpdated, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        }).start();
+        if (!downloadWeatherData.isDownload()) {
+            Toast.makeText(getApplicationContext(), R.string.downloadError, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        do {
+            downloadCityName = downloadWeatherData.getCityName();
+        } while (downloadCityName == null);
+
+        mainCity.setText(downloadWeatherData.getCityName());
+        if (mainTemperatureName.getText().toString().equals("F˚")) {
+            mainTemperature.setText(Integer.toString(Math.round((downloadWeatherData.getTemperature() * 1.8f) + 32)));
+        } else {
+            mainTemperature.setText(Integer.toString(Math.round(downloadWeatherData.getTemperature())));
+        }
+        if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
+            mainPressure.setText(Integer.toString(Math.round(downloadWeatherData.getPressure())));
+        } else {
+            mainPressure.setText((Integer.toString(Math.round((downloadWeatherData.getPressure() * 0.75f)))));
+        }
+        mainWindPower.setText(Integer.toString(Math.round(downloadWeatherData.getWindPower())));
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -169,6 +163,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
                                         .beginTransaction()
                                         .hide(getSupportFragmentManager().findFragmentById(R.id.fragmentPart))
                                         .commit();
+                                setMainInfoOnDisplay();
                                 return true;
                             }
                             return false;
