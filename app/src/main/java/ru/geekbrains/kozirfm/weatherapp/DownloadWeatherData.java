@@ -18,30 +18,47 @@ public class DownloadWeatherData implements Constants {
     private float temperature;
     private float windPower;
     private float pressure;
+    private boolean download = true;
+    private String city;
 
+    public DownloadWeatherData() {
+        city = "saint petersburg";
+    }
 
-    public boolean downloadWeather() {
-        HttpsURLConnection urlConnection = null;
+    public DownloadWeatherData(String city) {
+        this.city = city;
+    }
+
+    public void downloadWeather() {
         try {
-            URL uri = new URL(WEATHER_URL + BuildConfig.WEATHER_API_KEY);
-            urlConnection = (HttpsURLConnection) uri.openConnection();
-            urlConnection.setConnectTimeout(3000);
-            urlConnection.setRequestMethod("GET");
-            urlConnection.setReadTimeout(3000);
-            BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String result = resultInputStream(in);
-            Gson gson = new Gson();
-            WeatherRequest weatherRequest = gson.fromJson(result, WeatherRequest.class);
-            setWeatherParams(weatherRequest);
+            final URL uri = new URL(String.format("https://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&lang=ru&appid=", city) + BuildConfig.WEATHER_API_KEY);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    HttpsURLConnection urlConnection = null;
+                    try {
+                        urlConnection = (HttpsURLConnection) uri.openConnection();
+                        urlConnection.setConnectTimeout(3000);
+                        urlConnection.setRequestMethod("GET");
+                        urlConnection.setReadTimeout(3000);
+                        BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                        String result = resultInputStream(in);
+                        Gson gson = new Gson();
+                        WeatherRequest weatherRequest = gson.fromJson(result, WeatherRequest.class);
+                        setWeatherParams(weatherRequest);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        download = false;
+                    } finally {
+                        if (urlConnection != null) {
+                            urlConnection.disconnect();
+                        }
+                    }
+                }
+            }).start();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
         }
-        return true;
     }
 
     private String resultInputStream(BufferedReader in) throws IOException {
@@ -54,10 +71,14 @@ public class DownloadWeatherData implements Constants {
     }
 
     private void setWeatherParams(WeatherRequest weatherRequest) {
-        cityName = weatherRequest.getName();
-        temperature = weatherRequest.getMain().getTemp();
-        windPower = weatherRequest.getWind().getSpeed();
-        pressure = weatherRequest.getMain().getPressure();
+        this.cityName = weatherRequest.getName();
+        this.temperature = weatherRequest.getMain().getTemp();
+        this.windPower = weatherRequest.getWind().getSpeed();
+        this.pressure = weatherRequest.getMain().getPressure();
+    }
+
+    public boolean isDownload() {
+        return download;
     }
 
     public String getCityName() {

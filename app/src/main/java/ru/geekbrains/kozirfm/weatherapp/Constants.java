@@ -6,7 +6,6 @@ public interface Constants {
     String MAIN_TEMPERATURE = "MAIN_TEMPERATURE";
     String MAIN_WIND_POWER = "MAIN_WIND_POWER";
     String MAIN_PRESSURE = "MAIN_PRESSURE";
-    String WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather?q=saint%20petersburg&units=metric&lang=ru&appid=";
 
     //Settings
     String SHARED_PREFERENCES_NAME = "SETTINGS";

@@ -7,9 +7,17 @@
         <item>Казань</item>
         <item>Сочи</item>
         <item>Екатеринбург</item>
-        <item>Мурманск</item>
-        <item>Севастополь</item>
         <item>Хабаровск</item>
         <item>Омск</item>
+    </string-array>
+    <string-array name="cities">
+        <item>moscow</item>
+        <item>saint petersburg</item>
+        <item>novosibirsk</item>
+        <item>kazan</item>
+        <item>sochi</item>
+        <item>ekaterinburg</item>
+        <item>habarovsk</item>
+        <item>omsk</item>
     </string-array>
 </resources>
