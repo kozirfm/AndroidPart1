@@ -15,7 +15,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -31,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private TextView mainPressureName;
     private SettingsFragment settingsFragment;
     private SelectCityFragment selectCityFragment;
-    private DownloadWeatherData downloadWeatherData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,16 +81,8 @@ public class MainActivity extends AppCompatActivity implements Constants {
         mainTemperatureName = findViewById(R.id.mainTemperatureName);
         mainWindPowerName = findViewById(R.id.mainWindPowerName);
         mainPressureName = findViewById(R.id.mainPressureName);
-        mainCity.setText(R.string.city_moscow);
-        mainTemperature.setText(R.string.main_temperature);
-        mainWindPower.setText(R.string.main_wind_power);
-        mainPressure.setText(R.string.main_pressure);
-        mainTemperatureName.setText(R.string.celsius);
-        mainWindPowerName.setText(R.string.wind_power_ms);
-        mainPressureName.setText(R.string.pressure_button_mmHg);
         settingsFragment = new SettingsFragment();
         selectCityFragment = new SelectCityFragment();
-        downloadWeatherData = new DownloadWeatherData();
         BottomNavigationView navigationView = findViewById(R.id.navigationMenu);
         navigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
     }
@@ -126,30 +116,23 @@ public class MainActivity extends AppCompatActivity implements Constants {
     }
 
     public void setMainInfoOnDisplay() {
-        downloadWeatherData.downloadWeather();
-        String downloadCityName;
-
-        if (!downloadWeatherData.isDownload()) {
-            Toast.makeText(getApplicationContext(), R.string.downloadError, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        do {
-            downloadCityName = downloadWeatherData.getCityName();
-        } while (downloadCityName == null);
-
-        mainCity.setText(downloadWeatherData.getCityName());
-        if (mainTemperatureName.getText().toString().equals("F˚")) {
-            mainTemperature.setText(Integer.toString(Math.round((downloadWeatherData.getTemperature() * 1.8f) + 32)));
-        } else {
-            mainTemperature.setText(Integer.toString(Math.round(downloadWeatherData.getTemperature())));
-        }
-        if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
-            mainPressure.setText(Integer.toString(Math.round(downloadWeatherData.getPressure())));
-        } else {
-            mainPressure.setText((Integer.toString(Math.round((downloadWeatherData.getPressure() * 0.75f)))));
-        }
-        mainWindPower.setText(Integer.toString(Math.round(downloadWeatherData.getWindPower())));
+        new DownloadWeatherData("", new DownloadWeatherData.Callback() {
+            @Override
+            public void setData(WeatherData weatherData) {
+                mainCity.setText(weatherData.getCityName());
+                if (mainTemperatureName.getText().toString().equals("F˚")) {
+                    mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
+                } else {
+                    mainTemperature.setText(Integer.toString(Math.round(weatherData.getTemperature())));
+                }
+                if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
+                    mainPressure.setText(Integer.toString(Math.round(weatherData.getPressure())));
+                } else {
+                    mainPressure.setText((Integer.toString(Math.round((weatherData.getPressure() * 0.75f)))));
+                }
+                mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
+            }
+        });
     }
 
     private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
@@ -163,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements Constants {
                                         .beginTransaction()
                                         .hide(getSupportFragmentManager().findFragmentById(R.id.fragmentPart))
                                         .commit();
-                                setMainInfoOnDisplay();
                                 return true;
                             }
                             return false;
