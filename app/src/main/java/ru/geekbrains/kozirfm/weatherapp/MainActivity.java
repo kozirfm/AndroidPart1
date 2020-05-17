@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
     public void setMainInfoOnDisplay() {
         new DownloadWeatherData("", new DownloadWeatherData.Callback() {
             @Override
-            public void setData(WeatherData weatherData) {
+            public void getData(WeatherData weatherData) {
                 mainCity.setText(weatherData.getCityName());
                 if (mainTemperatureName.getText().toString().equals("F˚")) {
                     mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
@@ -148,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements Constants {
                                         .commit();
                                 return true;
                             }
-                            return false;
                         case R.id.navigationSearch:
                             setFragment(selectCityFragment);
                             return true;

@@ -40,7 +40,7 @@ public class DownloadWeatherData implements Constants {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.setData(new WeatherData(weatherRequest));
+                                callback.getData(new WeatherData(weatherRequest));
                             }
                         });
                     } catch (Exception e) {
@@ -59,7 +59,7 @@ public class DownloadWeatherData implements Constants {
     }
 
     interface Callback{
-        void setData(WeatherData weatherData);
+        void getData(WeatherData weatherData);
     }
 
     private String resultInputStream(BufferedReader in) throws IOException {

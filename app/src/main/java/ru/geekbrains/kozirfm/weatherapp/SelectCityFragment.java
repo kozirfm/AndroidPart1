@@ -49,7 +49,7 @@ public class SelectCityFragment extends Fragment {
     private void setWeatherOnDisplay(int position){
         new DownloadWeatherData(cities[position], new DownloadWeatherData.Callback() {
             @Override
-            public void setData(WeatherData weatherData) {
+            public void getData(WeatherData weatherData) {
                 TextView mainCity = getActivity().findViewById(R.id.mainCity);
                 TextView mainTemperature = getActivity().findViewById(R.id.mainTemperature);
                 TextView mainTemperatureName = getActivity().findViewById(R.id.mainTemperatureName);
