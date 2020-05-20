@@ -47,7 +47,7 @@ public class SettingsFragment extends Fragment implements Constants {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 setDarkTheme(isChecked);
-                getActivity().recreate();
+                requireActivity().recreate();
             }
         });
 
@@ -55,9 +55,9 @@ public class SettingsFragment extends Fragment implements Constants {
             @Override
             public void onClick(View v) {
                 setMetricsSetting(temperature.getCheckedRadioButtonId(), windPower.getCheckedRadioButtonId(), pressure.getCheckedRadioButtonId());
-                TextView temperatureName = getActivity().findViewById(R.id.mainTemperatureName);
-                TextView windPowerName = getActivity().findViewById(R.id.mainWindPowerName);
-                TextView pressureName = getActivity().findViewById(R.id.mainPressureName);
+                TextView temperatureName = requireActivity().findViewById(R.id.mainTemperatureName);
+                TextView windPowerName = requireActivity().findViewById(R.id.mainWindPowerName);
+                TextView pressureName = requireActivity().findViewById(R.id.mainPressureName);
                 temperatureName.setText(temperatureValue.getText());
                 windPowerName.setText(windPowerValue.getText());
                 pressureName.setText(pressureValue.getText());
@@ -68,7 +68,7 @@ public class SettingsFragment extends Fragment implements Constants {
     }
 
     private void init(View view) {
-        sharedPreferences = getActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         temperature = view.findViewById(R.id.temperatureSetting);
         windPower = view.findViewById(R.id.windPowerSetting);
         pressure = view.findViewById(R.id.pressureSetting);
@@ -78,9 +78,9 @@ public class SettingsFragment extends Fragment implements Constants {
 
     private void setMetricsSetting(int temperature, int windPower, int pressure) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        temperatureValue = getView().findViewById(this.temperature.getCheckedRadioButtonId());
-        windPowerValue = getView().findViewById(this.windPower.getCheckedRadioButtonId());
-        pressureValue = getView().findViewById(this.pressure.getCheckedRadioButtonId());
+        temperatureValue = requireView().findViewById(this.temperature.getCheckedRadioButtonId());
+        windPowerValue = requireView().findViewById(this.windPower.getCheckedRadioButtonId());
+        pressureValue = requireView().findViewById(this.pressure.getCheckedRadioButtonId());
         editor.putBoolean(IS_METRIC_SETTINGS, true);
         editor.putInt(METRICS_TEMPERATURE_ID, temperature);
         editor.putInt(METRICS_WIND_POWER_ID, windPower);
