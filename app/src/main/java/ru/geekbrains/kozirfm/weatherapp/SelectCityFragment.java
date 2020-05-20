@@ -37,10 +37,10 @@ public class SelectCityFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 setWeatherOnDisplay(position);
-                getActivity().
+                requireActivity().
                         getSupportFragmentManager().
                         beginTransaction().
-                        hide(getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentPart)).
+                        hide(requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentPart)).
                         commit();
             }
         });
@@ -50,9 +50,9 @@ public class SelectCityFragment extends Fragment {
         new DownloadWeatherData(cities[position], new DownloadWeatherData.Callback() {
             @Override
             public void getData(WeatherData weatherData) {
-                TextView mainCity = getActivity().findViewById(R.id.mainCity);
-                TextView mainTemperature = getActivity().findViewById(R.id.mainTemperature);
-                TextView mainTemperatureName = getActivity().findViewById(R.id.mainTemperatureName);
+                TextView mainCity = requireActivity().findViewById(R.id.mainCity);
+                TextView mainTemperature = requireActivity().findViewById(R.id.mainTemperature);
+                TextView mainTemperatureName = requireActivity().findViewById(R.id.mainTemperatureName);
 
                 mainCity.setText(weatherData.getCityName());
 
@@ -62,15 +62,15 @@ public class SelectCityFragment extends Fragment {
                     mainTemperature.setText(Integer.toString(Math.round(weatherData.getTemperature())));
                 }
 
-                TextView mainPressure = getActivity().findViewById(R.id.mainPressure);
-                TextView mainPressureName = getActivity().findViewById(R.id.mainPressureName);
+                TextView mainPressure = requireActivity().findViewById(R.id.mainPressure);
+                TextView mainPressureName = requireActivity().findViewById(R.id.mainPressureName);
                 if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
                     mainPressure.setText(Integer.toString(Math.round(weatherData.getPressure())));
                 } else {
                     mainPressure.setText((Integer.toString(Math.round((weatherData.getPressure() * 0.75f)))));
                 }
 
-                TextView mainWindPower = getActivity().findViewById(R.id.mainWindPower);
+                TextView mainWindPower = requireActivity().findViewById(R.id.mainWindPower);
                 mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
                 Toast.makeText(getContext(), R.string.dataUpdated, Toast.LENGTH_SHORT).show();
             }

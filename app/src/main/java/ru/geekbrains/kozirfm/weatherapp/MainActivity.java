@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(MAIN_CITY, mainCity.getText().toString());
         outState.putString(MAIN_TEMPERATURE, mainTemperature.getText().toString());
