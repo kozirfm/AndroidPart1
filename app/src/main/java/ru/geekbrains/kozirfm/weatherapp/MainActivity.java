@@ -1,35 +1,29 @@
 package ru.geekbrains.kozirfm.weatherapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity implements Constants {
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private TextView mainCity;
-    private TextView mainTemperature;
-    private TextView mainWindPower;
-    private TextView mainPressure;
-    private TextView mainTemperatureName;
-    private TextView mainWindPowerName;
-    private TextView mainPressureName;
-    private SettingsFragment settingsFragment;
+    private SharedPreferences sharedPreferences;
+    private MainDisplayFragment mainDisplayFragment;
     private SelectCityFragment selectCityFragment;
+    private SettingsFragment settingsFragment;
+    private BottomNavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,73 +31,55 @@ public class MainActivity extends AppCompatActivity implements Constants {
         setTheme();
         setContentView(R.layout.activity_main);
         initView();
-        setMainInfoOnDisplay();
-        setMetrics();
-        initWeekWeather();
+        setFragment(mainDisplayFragment, MAIN_DISPLAY_FRAGMENT);
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(MAIN_CITY, mainCity.getText().toString());
-        outState.putString(MAIN_TEMPERATURE, mainTemperature.getText().toString());
-        outState.putString(MAIN_WIND_POWER, mainWindPower.getText().toString());
-        outState.putString(MAIN_PRESSURE, mainPressure.getText().toString());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mainCity.setText(savedInstanceState.getString(MAIN_CITY));
-        mainTemperature.setText(savedInstanceState.getString(MAIN_TEMPERATURE));
-        mainWindPower.setText(savedInstanceState.getString(MAIN_WIND_POWER));
-        mainPressure.setText(savedInstanceState.getString(MAIN_PRESSURE));
-    }
-
-    private void setFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        if (fragmentManager.findFragmentById(R.id.fragmentPart) != fragment) {
-
-            fragmentTransaction.replace(R.id.fragmentPart, fragment).commit();
-        } else {
-            fragmentTransaction.show(fragment).commit();
+    private void setFragment(Fragment fragment, String s) {
+        if (s.equals(MAIN_DISPLAY_FRAGMENT)){
+            isNetworkAvailable(this);
         }
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentPart, fragment, s)
+                .commit();
     }
 
     private void initView() {
         swipeRefreshLayout = findViewById(R.id.swipeRefresh);
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
-        mainCity = findViewById(R.id.mainCity);
-        mainTemperature = findViewById(R.id.mainTemperature);
-        mainWindPower = findViewById(R.id.mainWindPower);
-        mainPressure = findViewById(R.id.mainPressure);
-        mainTemperatureName = findViewById(R.id.mainTemperatureName);
-        mainWindPowerName = findViewById(R.id.mainWindPowerName);
-        mainPressureName = findViewById(R.id.mainPressureName);
+        mainDisplayFragment = new MainDisplayFragment(getMainCity());
+        navigationView = findViewById(R.id.navigationMenu);
         settingsFragment = new SettingsFragment();
-        selectCityFragment = new SelectCityFragment();
-        BottomNavigationView navigationView = findViewById(R.id.navigationMenu);
         navigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
+        selectCityFragment = new SelectCityFragment(new SelectCityFragment.Callback() {
+            @Override
+            public void click(String string) {
+                setMainCity(string);
+                navigationView.setSelectedItemId(R.id.navigationHome);
+            }
+        });
     }
 
-    private void initWeekWeather() {
-        WeekWeatherSource weekWeatherSource = new WeekWeatherSource(getResources()).build();
-        RecyclerView recyclerView = findViewById(R.id.weekWeather);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(layoutManager);
-        WeekWeatherAdapter adapter = new WeekWeatherAdapter(weekWeatherSource);
-        recyclerView.setAdapter(adapter);
-    }
-
-    private void setMetrics() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
-        if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
-            mainTemperatureName.setText(sharedPreferences.getString(METRICS_TEMPERATURE_VALUE, mainTemperatureName.getText().toString()));
-            mainWindPowerName.setText(sharedPreferences.getString(METRICS_WIND_POWER_VALUE, mainWindPowerName.getText().toString()));
-            mainPressureName.setText(sharedPreferences.getString(METRICS_PRESSURE_VALUE, mainPressureName.getText().toString()));
+    public void isNetworkAvailable(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm.getActiveNetworkInfo() == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle(R.string.Error)
+                    .setMessage(R.string.ConnectionFalse);
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
         }
+    }
+
+    private void setMainCity(String city) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(CURRENT_CITY, city);
+        editor.apply();
+    }
+
+    private String getMainCity() {
+        sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, MODE_PRIVATE);
+        return sharedPreferences.getString(CURRENT_CITY, "");
     }
 
     private void setTheme() {
@@ -115,44 +91,19 @@ public class MainActivity extends AppCompatActivity implements Constants {
         }
     }
 
-    public void setMainInfoOnDisplay() {
-        new DownloadWeatherData("", new DownloadWeatherData.Callback() {
-            @Override
-            public void getData(WeatherData weatherData) {
-                mainCity.setText(weatherData.getCityName());
-                if (mainTemperatureName.getText().toString().equals("F˚")) {
-                    mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
-                } else {
-                    mainTemperature.setText(Integer.toString(Math.round(weatherData.getTemperature())));
-                }
-                if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
-                    mainPressure.setText(Integer.toString(Math.round(weatherData.getPressure())));
-                } else {
-                    mainPressure.setText((Integer.toString(Math.round((weatherData.getPressure() * 0.75f)))));
-                }
-                mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
-            }
-        });
-    }
-
-    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
+    public BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                     switch (menuItem.getItemId()) {
                         case R.id.navigationHome:
-                            if (getSupportFragmentManager().getFragments().size() != 0) {
-                                getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .hide(getSupportFragmentManager().findFragmentById(R.id.fragmentPart))
-                                        .commit();
-                                return true;
-                            }
+                            setFragment(new MainDisplayFragment(getMainCity()), MAIN_DISPLAY_FRAGMENT);
+                            return true;
                         case R.id.navigationSearch:
-                            setFragment(selectCityFragment);
+                            setFragment(selectCityFragment, SELECT_CITY_FRAGMENT);
                             return true;
                         case R.id.navigationSettings:
-                            setFragment(settingsFragment);
+                            setFragment(settingsFragment, SETTINGS_FRAGMENT);
                             return true;
                     }
                     return false;
@@ -166,8 +117,9 @@ public class MainActivity extends AppCompatActivity implements Constants {
             swipeRefreshLayout.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    setFragment(new MainDisplayFragment(getMainCity()), MAIN_DISPLAY_FRAGMENT);
                     swipeRefreshLayout.setRefreshing(false);
-                    setMainInfoOnDisplay();
+
                 }
             }, 1000);
         }

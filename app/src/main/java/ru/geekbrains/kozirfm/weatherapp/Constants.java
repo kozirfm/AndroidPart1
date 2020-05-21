@@ -1,11 +1,15 @@
 package ru.geekbrains.kozirfm.weatherapp;
 
 public interface Constants {
-    //Main Activity
+
     String MAIN_CITY = "MAIN_CITY";
     String MAIN_TEMPERATURE = "MAIN_TEMPERATURE";
     String MAIN_WIND_POWER = "MAIN_WIND_POWER";
     String MAIN_PRESSURE = "MAIN_PRESSURE";
+    String MAIN_DISPLAY_FRAGMENT = "MAIN_DISPLAY_FRAGMENT";
+    String SELECT_CITY_FRAGMENT = "SELECT_CITY_FRAGMENT";
+    String SETTINGS_FRAGMENT = "SETTINGS_FRAGMENT";
+    String CURRENT_CITY = "CURRENT_CITY";
 
     //Settings
     String SHARED_PREFERENCES_NAME = "SETTINGS";
