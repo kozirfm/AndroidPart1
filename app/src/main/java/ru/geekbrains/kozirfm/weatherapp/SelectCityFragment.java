@@ -12,11 +12,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Arrays;
-
 public class SelectCityFragment extends Fragment {
 
-    private String selectedCity;
+    private String[] cities;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -27,8 +25,8 @@ public class SelectCityFragment extends Fragment {
     }
 
     private void initListCities(View view) {
-        final String[] data = getResources().getStringArray(R.array.items);
-        final String[] cities = getResources().getStringArray(R.array.cities);
+        String[] data = getResources().getStringArray(R.array.items);
+        cities = getResources().getStringArray(R.array.cities);
         RecyclerView recyclerView = view.findViewById(R.id.listCities);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -38,42 +36,43 @@ public class SelectCityFragment extends Fragment {
         adapter.setOnItemClickListener(new ListCitiesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String city = ((TextView) view).getText().toString();
-                int num = Arrays.asList(data).indexOf(city);
-                selectedCity = cities[num];
-                DownloadWeatherData downloadWeatherData = new DownloadWeatherData(selectedCity);
-                downloadWeatherData.downloadWeather();
-                String downloadCityName;
-                do {
-                    downloadCityName = downloadWeatherData.getCityName();
-                } while (downloadCityName == null);
-                TextView mainCity = getActivity().findViewById(R.id.mainCity);
-                mainCity.setText(downloadWeatherData.getCityName());
-                TextView mainTemperature = getActivity().findViewById(R.id.mainTemperature);
-                TextView mainTemperatureName = getActivity().findViewById(R.id.mainTemperatureName);
-
-                if (mainTemperatureName.getText().toString().equals("F˚")) {
-                    mainTemperature.setText(Integer.toString(Math.round((downloadWeatherData.getTemperature() * 1.8f) + 32)));
-                } else {
-                    mainTemperature.setText(Integer.toString(Math.round(downloadWeatherData.getTemperature())));
-                }
-
-                TextView mainPressure = getActivity().findViewById(R.id.mainPressure);
-                TextView mainPressureName = getActivity().findViewById(R.id.mainPressureName);
-                if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
-                    mainPressure.setText(Integer.toString(Math.round(downloadWeatherData.getPressure())));
-                } else {
-                    mainPressure.setText((Integer.toString(Math.round((downloadWeatherData.getPressure() * 0.75f)))));
-                }
-
-                TextView mainWindPower = getActivity().findViewById(R.id.mainWindPower);
-                mainWindPower.setText(Integer.toString(Math.round(downloadWeatherData.getWindPower())));
-                Toast.makeText(getContext(), R.string.dataUpdated, Toast.LENGTH_SHORT).show();
-                getActivity().
+                setWeatherOnDisplay(position);
+                requireActivity().
                         getSupportFragmentManager().
                         beginTransaction().
-                        hide(getActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentPart)).
+                        hide(requireActivity().getSupportFragmentManager().findFragmentById(R.id.fragmentPart)).
                         commit();
+            }
+        });
+    }
+
+    private void setWeatherOnDisplay(int position){
+        new DownloadWeatherData(cities[position], new DownloadWeatherData.Callback() {
+            @Override
+            public void getData(WeatherData weatherData) {
+                TextView mainCity = requireActivity().findViewById(R.id.mainCity);
+                TextView mainTemperature = requireActivity().findViewById(R.id.mainTemperature);
+                TextView mainTemperatureName = requireActivity().findViewById(R.id.mainTemperatureName);
+
+                mainCity.setText(weatherData.getCityName());
+
+                if (mainTemperatureName.getText().toString().equals("F˚")) {
+                    mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
+                } else {
+                    mainTemperature.setText(Integer.toString(Math.round(weatherData.getTemperature())));
+                }
+
+                TextView mainPressure = requireActivity().findViewById(R.id.mainPressure);
+                TextView mainPressureName = requireActivity().findViewById(R.id.mainPressureName);
+                if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
+                    mainPressure.setText(Integer.toString(Math.round(weatherData.getPressure())));
+                } else {
+                    mainPressure.setText((Integer.toString(Math.round((weatherData.getPressure() * 0.75f)))));
+                }
+
+                TextView mainWindPower = requireActivity().findViewById(R.id.mainWindPower);
+                mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
+                Toast.makeText(getContext(), R.string.dataUpdated, Toast.LENGTH_SHORT).show();
             }
         });
     }
