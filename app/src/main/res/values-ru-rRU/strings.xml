@@ -44,4 +44,8 @@
     <string name="dataUpdated">Данные о погоде обновлены</string>
     <string name="settingSaved">Настройки успешно сохранены</string>
     <string name="downloadError">Ошибка загрузки</string>
+    <string name="Error">Ошибка</string>
+    <string name="ConnectionFalse">Отсутствует подключение к интернету</string>
+    <string name="ServerError">Сервер недоступен</string>
+    <string name="weatherDescription">Облачно</string>
 </resources>

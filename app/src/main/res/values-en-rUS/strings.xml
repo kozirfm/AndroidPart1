@@ -44,4 +44,8 @@
     <string name="dataUpdated">Data about weather updated</string>
     <string name="settingSaved">Setting saved</string>
     <string name="downloadError">Download error</string>
+    <string name="Error">Error</string>
+    <string name="ConnectionFalse">No internet connection</string>
+    <string name="ServerError">Server is not available</string>
+    <string name="weatherDescription">Cloudy</string>
 </resources>

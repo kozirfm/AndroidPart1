@@ -14,7 +14,6 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -23,16 +22,13 @@ public class SettingsFragment extends Fragment implements Constants {
     private RadioGroup temperature;
     private RadioGroup windPower;
     private RadioGroup pressure;
-    private RadioButton temperatureValue;
-    private RadioButton windPowerValue;
-    private RadioButton pressureValue;
     private SharedPreferences sharedPreferences;
     private Button setMetricsSetting;
     private Switch setDarkTheme;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.activity_settings, container, false);
+        View view = inflater.inflate(R.layout.activity_settings, container, false);
         init(view);
 
         if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
@@ -55,12 +51,6 @@ public class SettingsFragment extends Fragment implements Constants {
             @Override
             public void onClick(View v) {
                 setMetricsSetting(temperature.getCheckedRadioButtonId(), windPower.getCheckedRadioButtonId(), pressure.getCheckedRadioButtonId());
-                TextView temperatureName = requireActivity().findViewById(R.id.mainTemperatureName);
-                TextView windPowerName = requireActivity().findViewById(R.id.mainWindPowerName);
-                TextView pressureName = requireActivity().findViewById(R.id.mainPressureName);
-                temperatureName.setText(temperatureValue.getText());
-                windPowerName.setText(windPowerValue.getText());
-                pressureName.setText(pressureValue.getText());
                 Toast.makeText(getContext(), R.string.settingSaved, Toast.LENGTH_SHORT).show();
             }
         });
@@ -78,9 +68,9 @@ public class SettingsFragment extends Fragment implements Constants {
 
     private void setMetricsSetting(int temperature, int windPower, int pressure) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        temperatureValue = requireView().findViewById(this.temperature.getCheckedRadioButtonId());
-        windPowerValue = requireView().findViewById(this.windPower.getCheckedRadioButtonId());
-        pressureValue = requireView().findViewById(this.pressure.getCheckedRadioButtonId());
+        RadioButton temperatureValue = requireView().findViewById(this.temperature.getCheckedRadioButtonId());
+        RadioButton windPowerValue = requireView().findViewById(this.windPower.getCheckedRadioButtonId());
+        RadioButton pressureValue = requireView().findViewById(this.pressure.getCheckedRadioButtonId());
         editor.putBoolean(IS_METRIC_SETTINGS, true);
         editor.putInt(METRICS_TEMPERATURE_ID, temperature);
         editor.putInt(METRICS_WIND_POWER_ID, windPower);

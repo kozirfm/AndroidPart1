@@ -30,9 +30,8 @@ public class DownloadWeatherData implements Constants {
                     HttpsURLConnection urlConnection = null;
                     try {
                         urlConnection = (HttpsURLConnection) uri.openConnection();
-                        urlConnection.setConnectTimeout(3000);
                         urlConnection.setRequestMethod("GET");
-                        urlConnection.setReadTimeout(3000);
+                        urlConnection.setReadTimeout(10000);
                         BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                         String result = resultInputStream(in);
                         Gson gson = new Gson();
@@ -40,7 +39,7 @@ public class DownloadWeatherData implements Constants {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.getData(new WeatherData(weatherRequest));
+                                callback.onDownloadWeatherData(new WeatherData(weatherRequest));
                             }
                         });
                     } catch (Exception e) {
@@ -59,7 +58,7 @@ public class DownloadWeatherData implements Constants {
     }
 
     interface Callback{
-        void getData(WeatherData weatherData);
+        void onDownloadWeatherData(WeatherData weatherData);
     }
 
     private String resultInputStream(BufferedReader in) throws IOException {
