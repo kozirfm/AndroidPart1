@@ -3,10 +3,10 @@ package ru.geekbrains.kozirfm.weatherapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import java.io.IOException;
 
 import okhttp3.ResponseBody;
@@ -42,6 +43,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
     private TextView mainWindPowerName;
     private TextView mainPressureName;
     private TextView description;
+    private ImageView weatherIcon;
     private RecyclerView recyclerView;
 
     @Nullable
@@ -63,6 +65,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
         mainTemperatureName = view.findViewById(R.id.mainTemperatureName);
         mainWindPowerName = view.findViewById(R.id.mainWindPowerName);
         mainPressureName = view.findViewById(R.id.mainPressureName);
+        weatherIcon = view.findViewById(R.id.weatherIcon);
         recyclerView = view.findViewById(R.id.weekWeather);
     }
 
@@ -84,13 +87,6 @@ public class MainDisplayFragment extends Fragment implements Constants {
         }
     }
 
-    private void isDownloadError() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(R.string.Error).setMessage(R.string.ServerError);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
     private void downloadWeatherData(String city) {
         if (city.equals("")) {
             city = "saint petersburg";
@@ -105,7 +101,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
                         } else {
                             ResponseBody responseBody = response.errorBody();
                             try {
-                                Log.d("ERROR", responseBody.string());
+                                isDownloadError(responseBody.string());
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -120,9 +116,6 @@ public class MainDisplayFragment extends Fragment implements Constants {
     }
 
     private void setMainDisplayInfo(WeatherData weatherData) {
-        if (weatherData.getCod() != 200) {
-            isDownloadError();
-        }
         mainCity.setText(weatherData.getCityName());
         if (mainTemperatureName.getText().toString().equals("F˚")) {
             mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
@@ -136,6 +129,20 @@ public class MainDisplayFragment extends Fragment implements Constants {
         }
         mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
         description.setText(weatherData.getDescription());
+        setImage(weatherData.getIcon());
+    }
+
+    private void isDownloadError(String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.Error).setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    private void setImage(String icon){
+        Glide.with(requireContext())
+                .load(String.format("https://openweathermap.org/img/wn/%s@2x.png", icon))
+                .into(weatherIcon);
     }
 
 }
