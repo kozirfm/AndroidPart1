@@ -2,6 +2,8 @@ package ru.geekbrains.kozirfm.weatherapp;
 
 
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -23,7 +25,8 @@ public class DownloadWeatherData implements Constants {
 
         try {
             final URL uri = new URL(String.format("https://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&lang=ru&appid=", city) + BuildConfig.WEATHER_API_KEY);
-            final Handler handler = new Handler();
+            final long time = System.currentTimeMillis();
+            final Handler handler = new Handler(Looper.myLooper());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -39,6 +42,7 @@ public class DownloadWeatherData implements Constants {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.d("READ_TIME", String.valueOf(System.currentTimeMillis() - time));
                                 callback.onDownloadWeatherData(new WeatherData(weatherRequest));
                             }
                         });

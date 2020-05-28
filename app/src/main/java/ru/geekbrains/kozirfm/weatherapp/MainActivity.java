@@ -5,9 +5,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -42,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 .beginTransaction()
                 .replace(R.id.fragmentPart, fragment, s)
                 .commit();
+        initNotificationChannel();
     }
 
     private void initView() {
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 }
             };
 
+
     private SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
@@ -124,4 +130,16 @@ public class MainActivity extends AppCompatActivity implements Constants {
             }, 1000);
         }
     };
+
+    private void initNotificationChannel(){
+        startService(new Intent(MainActivity.this, DownloadWeatherDataService.class));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel channel = new NotificationChannel("1", "name", NotificationManager.IMPORTANCE_LOW);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
+        }
+    }
+
 }
