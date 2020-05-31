@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
@@ -39,26 +38,20 @@ public class SettingsFragment extends Fragment implements Constants {
 
         setDarkTheme.setChecked(isDarkTheme());
 
-        setDarkTheme.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                setDarkTheme(isChecked);
-                requireActivity().recreate();
-            }
+        setDarkTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            setDarkTheme(isChecked);
+            requireActivity().recreate();
         });
 
-        setMetricsSetting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setMetricsSetting(temperature.getCheckedRadioButtonId(), windPower.getCheckedRadioButtonId(), pressure.getCheckedRadioButtonId());
-                Toast.makeText(getContext(), R.string.settingSaved, Toast.LENGTH_SHORT).show();
-            }
+        setMetricsSetting.setOnClickListener(v -> {
+            setMetricsSetting(temperature.getCheckedRadioButtonId(), windPower.getCheckedRadioButtonId(), pressure.getCheckedRadioButtonId());
+            Toast.makeText(getContext(), R.string.settingSaved, Toast.LENGTH_SHORT).show();
         });
         return view;
     }
 
     private void init(View view) {
-        sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = this.requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         temperature = view.findViewById(R.id.temperatureSetting);
         windPower = view.findViewById(R.id.windPowerSetting);
         pressure = view.findViewById(R.id.pressureSetting);
