@@ -2,17 +2,20 @@ package ru.geekbrains.kozirfm.weatherapp;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import ru.geekbrains.kozirfm.weatherapp.database.CitySource;
+
 public class ListCitiesAdapter extends RecyclerView.Adapter<ListCitiesAdapter.ListCitiesViewHolder> {
 
-    private String[] dataSource;
+    private CitySource dataSource;
     private OnItemClickListener itemClickListener;
 
-    public ListCitiesAdapter(String[] dataSource) {
+    public ListCitiesAdapter(CitySource dataSource) {
         this.dataSource = dataSource;
     }
 
@@ -26,13 +29,13 @@ public class ListCitiesAdapter extends RecyclerView.Adapter<ListCitiesAdapter.Li
 
     @Override
     public void onBindViewHolder(@NonNull ListCitiesViewHolder listCitiesViewHolder, int i) {
-        listCitiesViewHolder.getTextView().setText(dataSource[i]);
+        listCitiesViewHolder.getTextView().setText(dataSource.getCityList().get(i).firstNameCity);
 
     }
 
     @Override
     public int getItemCount() {
-        return dataSource.length;
+        return (int) dataSource.getCountCities();
     }
 
     public interface OnItemClickListener {
@@ -55,12 +58,9 @@ public class ListCitiesAdapter extends RecyclerView.Adapter<ListCitiesAdapter.Li
             super(itemView);
             textView = (TextView) itemView;
 
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (itemClickListener != null) {
-                        itemClickListener.onItemClick(v, getAdapterPosition());
-                    }
+            textView.setOnClickListener(v -> {
+                if (itemClickListener != null) {
+                    itemClickListener.onItemClick(v, getAdapterPosition());
                 }
             });
         }

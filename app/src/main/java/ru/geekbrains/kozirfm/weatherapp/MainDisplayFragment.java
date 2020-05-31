@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+
 import java.io.IOException;
 
 import okhttp3.ResponseBody;
@@ -45,6 +46,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
     private TextView description;
     private ImageView weatherIcon;
     private RecyclerView recyclerView;
+    private SharedPreferences sharedPreferences;
 
     @Nullable
     @Override
@@ -52,6 +54,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
         View view = inflater.inflate(R.layout.main_display_fragment, container, false);
         initView(view);
         initWeekWeather();
+        loadLastWeatherInfo();
         setMetrics();
         return view;
     }
@@ -78,8 +81,28 @@ public class MainDisplayFragment extends Fragment implements Constants {
         recyclerView.setAdapter(adapter);
     }
 
+    private void saveLastWeatherInfo() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(MAIN_CITY, mainCity.getText().toString());
+        editor.putString(MAIN_TEMPERATURE, mainTemperature.getText().toString());
+        editor.putString(MAIN_WIND_POWER, mainWindPower.getText().toString());
+        editor.putString(MAIN_PRESSURE, mainPressure.getText().toString());
+        editor.putString(MAIN_DESCRIPTION, description.getText().toString());
+        editor.apply();
+
+    }
+
+    private void loadLastWeatherInfo() {
+        sharedPreferences = this.requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        mainCity.setText(sharedPreferences.getString(MAIN_CITY, mainCity.getText().toString()));
+        mainTemperature.setText(sharedPreferences.getString(MAIN_TEMPERATURE, mainTemperature.getText().toString()));
+        mainWindPower.setText(sharedPreferences.getString(MAIN_WIND_POWER, mainWindPower.getText().toString()));
+        mainPressure.setText(sharedPreferences.getString(MAIN_PRESSURE, mainPressure.getText().toString()));
+        description.setText(sharedPreferences.getString(MAIN_DESCRIPTION, description.getText().toString()));
+    }
+
     private void setMetrics() {
-        SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        sharedPreferences = this.requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
             mainTemperatureName.setText(sharedPreferences.getString(METRICS_TEMPERATURE_VALUE, mainTemperatureName.getText().toString()));
             mainWindPowerName.setText(sharedPreferences.getString(METRICS_WIND_POWER_VALUE, mainWindPowerName.getText().toString()));
@@ -92,7 +115,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
             city = "saint petersburg";
         }
 
-        MyApplication.getOpenWeather().loadWeather(city, "metric", "ru", BuildConfig.WEATHER_API_KEY)
+        MyApplication.getInstance().getOpenWeather().loadWeather(city, "metric", "ru", BuildConfig.WEATHER_API_KEY)
                 .enqueue(new retrofit2.Callback<WeatherRequest>() {
                     @Override
                     public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
@@ -116,6 +139,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
     }
 
     private void setMainDisplayInfo(WeatherData weatherData) {
+
         mainCity.setText(weatherData.getCityName());
         if (mainTemperatureName.getText().toString().equals("F˚")) {
             mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
@@ -129,6 +153,7 @@ public class MainDisplayFragment extends Fragment implements Constants {
         }
         mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
         description.setText(weatherData.getDescription());
+        saveLastWeatherInfo();
         setImage(weatherData.getIcon());
     }
 
@@ -139,8 +164,8 @@ public class MainDisplayFragment extends Fragment implements Constants {
         alertDialog.show();
     }
 
-    private void setImage(String icon){
-        Glide.with(requireContext())
+    private void setImage(String icon) {
+        Glide.with(this.requireActivity())
                 .load(String.format("https://openweathermap.org/img/wn/%s@2x.png", icon))
                 .into(weatherIcon);
     }
