@@ -10,6 +10,8 @@ public class WeatherData {
     private float pressure;
     private int cod;
     private String description;
+    private String icon;
+
 
     public WeatherData(WeatherRequest weatherRequest) {
         this.cityName = weatherRequest.getName();
@@ -18,6 +20,7 @@ public class WeatherData {
         this.pressure = weatherRequest.getMain().getPressure();
         this.cod = weatherRequest.getCod();
         this.description = weatherRequest.getWeather()[0].getDescription();
+        this.icon = weatherRequest.getWeather()[0].getIcon();
     }
 
     public String getCityName() {
@@ -42,5 +45,13 @@ public class WeatherData {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
     }
 }

@@ -15,11 +15,11 @@ public class SelectCityFragment extends Fragment implements Constants {
     private String[] cities;
     private Callback callback;
 
-    public SelectCityFragment(){
+    public SelectCityFragment() {
 
     }
 
-    public SelectCityFragment(Callback callback){
+    public SelectCityFragment(Callback callback) {
         this.callback = callback;
     }
 
@@ -44,12 +44,7 @@ public class SelectCityFragment extends Fragment implements Constants {
         recyclerView.setLayoutManager(layoutManager);
         ListCitiesAdapter adapter = new ListCitiesAdapter(data);
         recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener(new ListCitiesAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                callback.click(cities[position]);
-            }
-        });
+        adapter.setOnItemClickListener((view1, position) -> callback.click(cities[position]));
     }
-    
+
 }

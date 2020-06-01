@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements Constants {
     }
 
     private void setFragment(Fragment fragment, String s) {
-        if (s.equals(MAIN_DISPLAY_FRAGMENT)){
+        if (s.equals(MAIN_DISPLAY_FRAGMENT)) {
             isNetworkAvailable(this);
         }
         getSupportFragmentManager()
@@ -56,12 +56,9 @@ public class MainActivity extends AppCompatActivity implements Constants {
         navigationView = findViewById(R.id.navigationMenu);
         settingsFragment = new SettingsFragment();
         navigationView.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
-        selectCityFragment = new SelectCityFragment(new SelectCityFragment.Callback() {
-            @Override
-            public void click(String string) {
-                setMainCity(string);
-                navigationView.setSelectedItemId(R.id.navigationHome);
-            }
+        selectCityFragment = new SelectCityFragment(string -> {
+            setMainCity(string);
+            navigationView.setSelectedItemId(R.id.navigationHome);
         });
     }
 
@@ -120,20 +117,17 @@ public class MainActivity extends AppCompatActivity implements Constants {
         @Override
         public void onRefresh() {
             swipeRefreshLayout.setRefreshing(true);
-            swipeRefreshLayout.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setFragment(new MainDisplayFragment(getMainCity()), MAIN_DISPLAY_FRAGMENT);
-                    swipeRefreshLayout.setRefreshing(false);
+            swipeRefreshLayout.postDelayed(() -> {
+                setFragment(new MainDisplayFragment(getMainCity()), MAIN_DISPLAY_FRAGMENT);
+                swipeRefreshLayout.setRefreshing(false);
 
-                }
             }, 1000);
         }
     };
 
-    private void initNotificationChannel(){
+    private void initNotificationChannel() {
         startService(new Intent(MainActivity.this, DownloadWeatherDataService.class));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             NotificationChannel channel = new NotificationChannel("1", "name", NotificationManager.IMPORTANCE_LOW);
             if (manager != null) {

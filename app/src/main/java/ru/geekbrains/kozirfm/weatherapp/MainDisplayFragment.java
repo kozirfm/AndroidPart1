@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,36 +16,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import java.io.IOException;
 
-public class MainDisplayFragment extends Fragment implements Constants{
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Response;
+import ru.geekbrains.kozirfm.weatherapp.data.WeatherRequest;
 
-    public MainDisplayFragment(){
+
+public class MainDisplayFragment extends Fragment implements Constants {
+
+    public MainDisplayFragment() {
 
     }
 
-    public MainDisplayFragment(String city){
-        new DownloadWeatherData(city, new DownloadWeatherData.Callback() {
-            @Override
-            public void onDownloadWeatherData(WeatherData weatherData) {
-                if(weatherData.getCod() != 200){
-                    isDownloadError();
-                }
-                mainCity.setText(weatherData.getCityName());
-                if (mainTemperatureName.getText().toString().equals("F˚")) {
-                    mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
-                } else {
-                    mainTemperature.setText(Integer.toString(Math.round(weatherData.getTemperature())));
-                }
-                if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
-                    mainPressure.setText(Integer.toString(Math.round(weatherData.getPressure())));
-                } else {
-                    mainPressure.setText((Integer.toString(Math.round((weatherData.getPressure() * 0.75f)))));
-                }
-                mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
-                description.setText(weatherData.getDescription());
-
-            }
-        });
+    public MainDisplayFragment(String city) {
+        downloadWeatherData(city);
     }
 
     private TextView mainCity;
@@ -55,6 +43,7 @@ public class MainDisplayFragment extends Fragment implements Constants{
     private TextView mainWindPowerName;
     private TextView mainPressureName;
     private TextView description;
+    private ImageView weatherIcon;
     private RecyclerView recyclerView;
 
     @Nullable
@@ -67,7 +56,7 @@ public class MainDisplayFragment extends Fragment implements Constants{
         return view;
     }
 
-    private void initView(View view){
+    private void initView(View view) {
         mainCity = view.findViewById(R.id.mainCity);
         mainTemperature = view.findViewById(R.id.mainTemperature);
         mainWindPower = view.findViewById(R.id.mainWindPower);
@@ -76,6 +65,7 @@ public class MainDisplayFragment extends Fragment implements Constants{
         mainTemperatureName = view.findViewById(R.id.mainTemperatureName);
         mainWindPowerName = view.findViewById(R.id.mainWindPowerName);
         mainPressureName = view.findViewById(R.id.mainPressureName);
+        weatherIcon = view.findViewById(R.id.weatherIcon);
         recyclerView = view.findViewById(R.id.weekWeather);
     }
 
@@ -88,7 +78,7 @@ public class MainDisplayFragment extends Fragment implements Constants{
         recyclerView.setAdapter(adapter);
     }
 
-    public void setMetrics() {
+    private void setMetrics() {
         SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         if (sharedPreferences.getBoolean(IS_METRIC_SETTINGS, false)) {
             mainTemperatureName.setText(sharedPreferences.getString(METRICS_TEMPERATURE_VALUE, mainTemperatureName.getText().toString()));
@@ -97,12 +87,62 @@ public class MainDisplayFragment extends Fragment implements Constants{
         }
     }
 
-    private void isDownloadError(){
+    private void downloadWeatherData(String city) {
+        if (city.equals("")) {
+            city = "saint petersburg";
+        }
+
+        MyApplication.getOpenWeather().loadWeather(city, "metric", "ru", BuildConfig.WEATHER_API_KEY)
+                .enqueue(new retrofit2.Callback<WeatherRequest>() {
+                    @Override
+                    public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
+                        if (response.body() != null && response.isSuccessful()) {
+                            setMainDisplayInfo(new WeatherData(response.body()));
+                        } else {
+                            ResponseBody responseBody = response.errorBody();
+                            try {
+                                isDownloadError(responseBody.string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<WeatherRequest> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+    }
+
+    private void setMainDisplayInfo(WeatherData weatherData) {
+        mainCity.setText(weatherData.getCityName());
+        if (mainTemperatureName.getText().toString().equals("F˚")) {
+            mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
+        } else {
+            mainTemperature.setText(Integer.toString(Math.round(weatherData.getTemperature())));
+        }
+        if (mainPressureName.getText().toString().equals("гПа") || mainPressureName.getText().toString().equals("hPa")) {
+            mainPressure.setText(Integer.toString(Math.round(weatherData.getPressure())));
+        } else {
+            mainPressure.setText((Integer.toString(Math.round((weatherData.getPressure() * 0.75f)))));
+        }
+        mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
+        description.setText(weatherData.getDescription());
+        setImage(weatherData.getIcon());
+    }
+
+    private void isDownloadError(String message) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-        builder.setTitle(R.string.Error)
-                .setMessage(R.string.ServerError);
+        builder.setTitle(R.string.Error).setMessage(message);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    private void setImage(String icon){
+        Glide.with(requireContext())
+                .load(String.format("https://openweathermap.org/img/wn/%s@2x.png", icon))
+                .into(weatherIcon);
     }
 
 }
