@@ -7,8 +7,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Build;
@@ -16,9 +18,11 @@ import android.os.Bundle;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 public class MainActivity extends AppCompatActivity implements Constants {
 
@@ -28,14 +32,32 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private SelectCityFragment selectCityFragment;
     private SettingsFragment settingsFragment;
     private BottomNavigationView navigationView;
+    private BroadcastReceiver lowBatteryModeReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        isBatteryLow();
         setTheme();
         setContentView(R.layout.activity_main);
         initView();
+        initToken();
         setFragment(mainDisplayFragment, MAIN_DISPLAY_FRAGMENT);
+    }
+
+    private void initToken(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener((task -> {
+                    if (task.isSuccessful()){
+                        String token = task.getResult().getToken();
+                        Log.d("TOKEN", token);
+                    }
+                }));
+    }
+
+    private void isBatteryLow() {
+        lowBatteryModeReceiver = new LowBatteryModeReceiver();
+        registerReceiver(lowBatteryModeReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
     }
 
     private void setFragment(Fragment fragment, String s) {
@@ -129,10 +151,19 @@ public class MainActivity extends AppCompatActivity implements Constants {
         startService(new Intent(MainActivity.this, DownloadWeatherDataService.class));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationChannel channel = new NotificationChannel("1", "name", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel("1", "name", NotificationManager.IMPORTANCE_HIGH);
+            channel.enableLights(true);
             if (manager != null) {
                 manager.createNotificationChannel(channel);
             }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(lowBatteryModeReceiver != null){
+            unregisterReceiver(lowBatteryModeReceiver);
         }
     }
 
