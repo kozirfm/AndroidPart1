@@ -10,10 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import ru.geekbrains.kozirfm.weatherapp.database.City;
+import ru.geekbrains.kozirfm.weatherapp.database.CitySource;
+
 public class SelectCityFragment extends Fragment implements Constants {
 
-    private String[] cities;
     private Callback callback;
+    private CitySource citySource;
 
     public SelectCityFragment() {
 
@@ -36,15 +39,30 @@ public class SelectCityFragment extends Fragment implements Constants {
     }
 
     private void initListCities(View view) {
-        String[] data = getResources().getStringArray(R.array.items);
-        cities = getResources().getStringArray(R.array.cities);
+        citySource = new CitySource(MyApplication.getInstance().getCityListDao());
+        if(citySource.getCountCities() == 0){
+            downloadFromArray();
+        }
+
         RecyclerView recyclerView = view.findViewById(R.id.listCities);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        ListCitiesAdapter adapter = new ListCitiesAdapter(data);
+        ListCitiesAdapter adapter = new ListCitiesAdapter(citySource);
         recyclerView.setAdapter(adapter);
-        adapter.setOnItemClickListener((view1, position) -> callback.click(cities[position]));
+        adapter.setOnItemClickListener((view1, position) -> callback.click(citySource.getCityList().get(position).lastNameCity));
+    }
+
+    private void downloadFromArray(){
+        String[] items = getResources().getStringArray(R.array.items);
+        String[] cities = getResources().getStringArray(R.array.cities);
+        City city = new City();
+        for (int i = 0; i < items.length; i++){
+             city.firstNameCity = items[i];
+             city.lastNameCity = cities[i];
+             citySource.addCity(city);
+        }
+
     }
 
 }
