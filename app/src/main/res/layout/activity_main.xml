@@ -16,7 +16,18 @@
             android:id="@+id/fragmentPart"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1">
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/currentLocationButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="15dp"
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_menu_mylocation"
+                android:focusable="true" />
+        </FrameLayout>
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/navigationMenu"

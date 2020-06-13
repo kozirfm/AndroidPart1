@@ -3,6 +3,7 @@ package ru.geekbrains.kozirfm.weatherapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,10 @@ public class MainDisplayFragment extends Fragment implements Constants {
 
     public MainDisplayFragment() {
 
+    }
+
+    public MainDisplayFragment(double lat, double lon){
+        downloadWeatherData(lat, lon);
     }
 
     public MainDisplayFragment(String city) {
@@ -110,6 +115,31 @@ public class MainDisplayFragment extends Fragment implements Constants {
         }
     }
 
+    protected void downloadWeatherData(double lat, double lon) {
+
+        MyApplication.getInstance().getOpenWeather().loadLocationWeather(String.format("%.2f", lat), String.format("%.2f", lon), "metric", "ru", BuildConfig.WEATHER_API_KEY)
+                .enqueue(new retrofit2.Callback<WeatherRequest>() {
+                    @Override
+                    public void onResponse(Call<WeatherRequest> call, Response<WeatherRequest> response) {
+                        if (response.body() != null && response.isSuccessful()) {
+                            setMainDisplayInfo(new WeatherData(response.body()));
+                        } else {
+                            ResponseBody responseBody = response.errorBody();
+                            try {
+                                isDownloadError(responseBody.string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<WeatherRequest> call, Throwable t) {
+                        t.printStackTrace();
+                    }
+                });
+    }
+
     private void downloadWeatherData(String city) {
         if (city.equals("")) {
             city = "saint petersburg";
@@ -139,7 +169,6 @@ public class MainDisplayFragment extends Fragment implements Constants {
     }
 
     private void setMainDisplayInfo(WeatherData weatherData) {
-
         mainCity.setText(weatherData.getCityName());
         if (mainTemperatureName.getText().toString().equals("F˚")) {
             mainTemperature.setText(Integer.toString(Math.round((weatherData.getTemperature() * 1.8f) + 32)));
