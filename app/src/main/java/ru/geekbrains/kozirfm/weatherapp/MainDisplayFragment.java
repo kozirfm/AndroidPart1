@@ -154,7 +154,6 @@ public class MainDisplayFragment extends Fragment implements Constants {
         mainWindPower.setText(Integer.toString(Math.round(weatherData.getWindPower())));
         description.setText(weatherData.getDescription());
         saveLastWeatherInfo();
-        setImage(weatherData.getIcon());
     }
 
     private void isDownloadError(String message) {
@@ -162,12 +161,6 @@ public class MainDisplayFragment extends Fragment implements Constants {
         builder.setTitle(R.string.Error).setMessage(message);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
-    }
-
-    private void setImage(String icon) {
-        Glide.with(this.requireActivity())
-                .load(String.format("https://openweathermap.org/img/wn/%s@2x.png", icon))
-                .into(weatherIcon);
     }
 
 }
