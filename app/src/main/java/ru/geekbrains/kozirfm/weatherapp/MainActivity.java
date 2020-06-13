@@ -24,10 +24,10 @@ import android.os.Bundle;
 
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 public class MainActivity extends AppCompatActivity implements Constants {
@@ -39,7 +39,6 @@ public class MainActivity extends AppCompatActivity implements Constants {
     private SettingsFragment settingsFragment;
     private BottomNavigationView navigationView;
     private BroadcastReceiver lowBatteryModeReceiver;
-    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +118,21 @@ public class MainActivity extends AppCompatActivity implements Constants {
                 .addOnCompleteListener((task -> {
                     if (task.isSuccessful()){
                         String token = task.getResult().getToken();
+                    }
+                }));
+    }
+
+    private void isBatteryLow() {
+        lowBatteryModeReceiver = new LowBatteryModeReceiver();
+        registerReceiver(lowBatteryModeReceiver, new IntentFilter(Intent.ACTION_BATTERY_LOW));
+    }
+
+    private void initToken(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener((task -> {
+                    if (task.isSuccessful()){
+                        String token = task.getResult().getToken();
+                        Log.d("TOKEN", token);
                     }
                 }));
     }
